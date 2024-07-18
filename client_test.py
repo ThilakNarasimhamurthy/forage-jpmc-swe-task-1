@@ -8,6 +8,8 @@ class ClientTest(unittest.TestCase):
       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
     ]
     """ ------------ Add the assertion below ------------ """
+    self.assertEqual(getDataPoint(quotes[0]), ('ABC', 120.48, 121.2, (120.48 + 121.2) / 2))
+    self.assertEqual(getDataPoint(quotes[1]), ('DEF', 117.87, 121.68, (117.87 + 121.68) / 2))
 
   def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
     quotes = [
@@ -16,9 +18,34 @@ class ClientTest(unittest.TestCase):
     ]
     """ ------------ Add the assertion below ------------ """
 
+    self.assertEqual(getDataPoint(quotes[0]), ('ABC', 120.48, 119.2, (120.48 + 119.2) / 2))
+    self.assertEqual(getDataPoint(quotes[1]), ('DEF', 117.87, 121.68, (117.87 + 121.68) / 2))
 
   """ ------------ Add more unit tests ------------ """
 
+
+def test_getDataPoint_withInvalidData(self):
+  quotes = [
+    {'top_ask': {'price': None, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453',
+     'top_bid': {'price': 120.48, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+    {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453',
+     'top_bid': {'price': None, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+  ]
+  with self.assertRaises(TypeError):
+    getDataPoint(quotes[0])
+  with self.assertRaises(TypeError):
+    getDataPoint(quotes[1])
+
+
+def test_getDataPoint_withZeroPrices(self):
+  quotes = [
+    {'top_ask': {'price': 0.0, 'size': 36}, 'timestamp': '2019-02-11 22:06:30.572453',
+     'top_bid': {'price': 0.0, 'size': 109}, 'id': '0.109974697771', 'stock': 'ABC'},
+    {'top_ask': {'price': 0.0, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453',
+     'top_bid': {'price': 0.0, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+  ]
+  self.assertEqual(getDataPoint(quotes[0]), ('ABC', 0.0, 0.0, 0.0))
+  self.assertEqual(getDataPoint(quotes[1]), ('DEF', 0.0, 0.0, 0.0))
 
 
 if __name__ == '__main__':
